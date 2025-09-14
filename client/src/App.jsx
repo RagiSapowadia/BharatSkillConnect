@@ -1,0 +1,84 @@
+import RouteGuard from "./components/route-guard";
+import StudentCoursesPage from "./pages/student/student-courses";
+import { Routes, Route } from "react-router-dom";
+import { useContext } from "react";
+import Header from "./components/common/header";
+import LandingPage from "./pages/student/home";
+import StudentLiveSessionsPage from "./pages/student/live-sessions";
+import InstructorLiveSessionsPage from "./pages/instructor/live-sessions";
+import InstructorDashboardPage from "./pages/instructor/index";
+import StudentViewCoursesPage from "./pages/student/courses";
+import NotFoundPage from "./pages/not-found";
+import Footer from "./components/common/footer";
+import { AuthContext } from "@/context/auth-context";
+import AuthPage from "./pages/auth";
+import StudentViewCourseDetailsPage from "./pages/student/course-details";
+import StudentViewCourseProgressPage from "./pages/student/course-progress";
+import PaymentReturnPage from "./pages/student/payment-return";
+import StudentProfilePage from "./pages/student/profile";
+function App() {
+  const { auth } = useContext(AuthContext);
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/student/live-sessions"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<StudentLiveSessionsPage />}
+              />
+            }
+          />
+          <Route
+            path="/instructor/live-sessions"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<InstructorLiveSessionsPage />}
+              />
+            }
+          />
+          <Route
+            path="/instructor"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<InstructorDashboardPage />}
+              />
+            }
+          />
+          <Route path="/student-courses" element={<StudentCoursesPage />} />
+          <Route path="/courses" element={<StudentViewCoursesPage />} />
+          <Route
+            path="/course/details/:id"
+            element={<StudentViewCourseDetailsPage />}
+          />
+          <Route
+            path="/course-progress/:id"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<StudentViewCourseProgressPage />}
+              />
+            }
+          />
+          <Route path="/payment-return" element={<PaymentReturnPage />} />
+          <Route path="/student/profile" element={<StudentProfilePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
