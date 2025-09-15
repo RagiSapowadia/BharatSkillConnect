@@ -2436,6 +2436,546 @@ moreCourses.forEach(course => {
   courses.push(course);
 });
 
+// Add international language courses
+const internationalCourses = [
+  {
+    instructorName: "Prof. Maria Santos",
+    title: "Spanish for Beginners",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Spanish",
+    subtitle: "Learn Spanish from Zero: Complete Beginner's Guide",
+    description: "Master Spanish language fundamentals with this comprehensive beginner's course. Learn pronunciation, basic grammar, essential vocabulary, and conversational skills. Perfect for travelers, students, and anyone interested in learning Spanish.",
+    objectives: "Master Spanish pronunciation and phonetics,Learn essential Spanish vocabulary and phrases,Understand basic Spanish grammar and sentence structure,Develop conversational skills for daily situations,Learn about Spanish culture and traditions,Understand formal and informal language usage,Build confidence in speaking Spanish,Learn to read and write in Spanish,Understand Spanish numbers, time, and dates,Prepare for Spanish language certifications",
+    image: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop",
+    pricing: 1799,
+    curriculum: [
+      {
+        title: "Introduction to Spanish Language and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 25
+      },
+      {
+        title: "Spanish Alphabet and Pronunciation Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 20
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_spanish_1",
+        title: "Spanish Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_spanish_1",
+            type: "video",
+            title: "Spanish Alphabet and Pronunciation",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 45,
+          },
+          {
+            lessonId: "lesson_spanish_2",
+            type: "video",
+            title: "Basic Greetings and Introductions",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 40,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Emma Wilson",
+        studentEmail: "emma.wilson@email.com",
+        paidAmount: 1799
+      }
+    ],
+    date: new Date("2024-06-01"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Dr. Jean-Pierre Dubois",
+    title: "French Language Mastery",
+    category: "Language Learning",
+    level: "intermediate",
+    primaryLanguage: "French",
+    subtitle: "Master French: From Intermediate to Advanced",
+    description: "Take your French skills to the next level with this comprehensive intermediate course. Learn complex grammar, advanced vocabulary, French literature, and business French. Perfect for students who have basic French knowledge.",
+    objectives: "Master advanced French grammar and syntax,Learn sophisticated French vocabulary and expressions,Understand French literature and cultural references,Develop business French communication skills,Learn about French history and culture,Master French pronunciation and accent,Understand regional French dialects,Learn French idioms and colloquialisms,Develop writing skills in French,Prepare for DELF/DALF certifications",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+    pricing: 2299,
+    curriculum: [
+      {
+        title: "French Culture and Advanced Language Learning",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 30
+      },
+      {
+        title: "French Grammar Reference Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 25
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_french_1",
+        title: "Advanced French Grammar",
+        lessons: [
+          {
+            lessonId: "lesson_french_1",
+            type: "video",
+            title: "Complex French Verb Tenses",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 60,
+          },
+          {
+            lessonId: "lesson_french_2",
+            type: "video",
+            title: "French Subjunctive Mood",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 55,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Sophie Martin",
+        studentEmail: "sophie.martin@email.com",
+        paidAmount: 2299
+      }
+    ],
+    date: new Date("2024-06-05"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Prof. Hans Mueller",
+    title: "German Language Essentials",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "German",
+    subtitle: "Learn German: Complete Beginner's Course",
+    description: "Start your German language journey with this comprehensive beginner's course. Learn German grammar, vocabulary, pronunciation, and cultural aspects. Perfect for students, professionals, and travelers.",
+    objectives: "Master German pronunciation and phonetics,Learn essential German vocabulary and phrases,Understand German grammar and sentence structure,Develop conversational skills in German,Learn about German culture and traditions,Understand formal and informal German usage,Build confidence in speaking German,Learn to read and write in German,Understand German numbers, time, and dates,Prepare for German language certifications",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop",
+    pricing: 1999,
+    curriculum: [
+      {
+        title: "Introduction to German Language and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 28
+      },
+      {
+        title: "German Grammar Basics (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 22
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_german_1",
+        title: "German Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_german_1",
+            type: "video",
+            title: "German Alphabet and Pronunciation",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 50,
+          },
+          {
+            lessonId: "lesson_german_2",
+            type: "video",
+            title: "German Articles and Gender",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 45,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Klaus Weber",
+        studentEmail: "klaus.weber@email.com",
+        paidAmount: 1999
+      }
+    ],
+    date: new Date("2024-06-10"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Dr. Yuki Tanaka",
+    title: "Japanese Language and Culture",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Japanese",
+    subtitle: "Learn Japanese: Hiragana, Katakana, and Basic Conversation",
+    description: "Discover the beauty of Japanese language and culture. Learn Hiragana, Katakana, basic Kanji, essential vocabulary, and cultural etiquette. Perfect for anime lovers, travelers, and culture enthusiasts.",
+    objectives: "Master Hiragana and Katakana writing systems,Learn basic Kanji characters and stroke order,Understand Japanese grammar and sentence structure,Develop conversational skills in Japanese,Learn about Japanese culture and etiquette,Understand honorifics and polite language,Build confidence in speaking Japanese,Learn to read and write in Japanese,Understand Japanese numbers, time, and dates,Prepare for JLPT N5 certification",
+    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=300&fit=crop",
+    pricing: 2199,
+    curriculum: [
+      {
+        title: "Introduction to Japanese Language and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 32
+      },
+      {
+        title: "Japanese Writing Systems Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 28
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_japanese_1",
+        title: "Japanese Writing Systems",
+        lessons: [
+          {
+            lessonId: "lesson_japanese_1",
+            type: "video",
+            title: "Hiragana: The Foundation of Japanese Writing",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 70,
+          },
+          {
+            lessonId: "lesson_japanese_2",
+            type: "video",
+            title: "Katakana: Foreign Words and Sounds",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 65,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Akira Sato",
+        studentEmail: "akira.sato@email.com",
+        paidAmount: 2199
+      }
+    ],
+    date: new Date("2024-06-15"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Prof. Li Wei",
+    title: "Mandarin Chinese for Beginners",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Chinese",
+    subtitle: "Learn Mandarin Chinese: Pinyin, Characters, and Conversation",
+    description: "Master Mandarin Chinese with this comprehensive beginner's course. Learn Pinyin pronunciation, basic Chinese characters, essential vocabulary, and cultural insights. Perfect for business professionals and culture enthusiasts.",
+    objectives: "Master Pinyin pronunciation system,Learn basic Chinese characters and stroke order,Understand Chinese grammar and sentence structure,Develop conversational skills in Mandarin,Learn about Chinese culture and traditions,Understand tones and pronunciation rules,Build confidence in speaking Mandarin,Learn to read and write in Chinese,Understand Chinese numbers, time, and dates,Prepare for HSK Level 1 certification",
+    image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400&h=300&fit=crop",
+    pricing: 2099,
+    curriculum: [
+      {
+        title: "Introduction to Mandarin Chinese and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 30
+      },
+      {
+        title: "Chinese Characters and Pinyin Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 25
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_chinese_1",
+        title: "Chinese Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_chinese_1",
+            type: "video",
+            title: "Pinyin System and Tones",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 60,
+          },
+          {
+            lessonId: "lesson_chinese_2",
+            type: "video",
+            title: "Basic Chinese Characters and Stroke Order",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 55,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Chen Ming",
+        studentEmail: "chen.ming@email.com",
+        paidAmount: 2099
+      }
+    ],
+    date: new Date("2024-06-20"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Dr. Alessandro Rossi",
+    title: "Italian Language and Culture",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Italian",
+    subtitle: "Learn Italian: Romance Language and Rich Culture",
+    description: "Discover the romance of Italian language and culture. Learn Italian pronunciation, grammar, vocabulary, and cultural traditions. Perfect for travelers, food lovers, and culture enthusiasts.",
+    objectives: "Master Italian pronunciation and phonetics,Learn essential Italian vocabulary and phrases,Understand Italian grammar and sentence structure,Develop conversational skills in Italian,Learn about Italian culture and traditions,Understand formal and informal Italian usage,Build confidence in speaking Italian,Learn to read and write in Italian,Understand Italian numbers, time, and dates,Prepare for CILS certification",
+    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=400&h=300&fit=crop",
+    pricing: 1899,
+    curriculum: [
+      {
+        title: "Introduction to Italian Language and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 27
+      },
+      {
+        title: "Italian Grammar Essentials (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 23
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_italian_1",
+        title: "Italian Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_italian_1",
+            type: "video",
+            title: "Italian Alphabet and Pronunciation",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 45,
+          },
+          {
+            lessonId: "lesson_italian_2",
+            type: "video",
+            title: "Italian Articles and Gender Agreement",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 50,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Marco Bianchi",
+        studentEmail: "marco.bianchi@email.com",
+        paidAmount: 1899
+      }
+    ],
+    date: new Date("2024-06-25"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Prof. Rajesh Kumar",
+    title: "Hindi Language Mastery",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Hindi",
+    subtitle: "Learn Hindi: Devanagari Script and Indian Culture",
+    description: "Master Hindi language with this comprehensive course covering Devanagari script, grammar, vocabulary, and Indian cultural context. Perfect for heritage learners and culture enthusiasts.",
+    objectives: "Master Devanagari script and writing system,Learn Hindi pronunciation and phonetics,Understand Hindi grammar and sentence structure,Develop conversational skills in Hindi,Learn about Indian culture and traditions,Understand formal and informal Hindi usage,Build confidence in speaking Hindi,Learn to read and write in Hindi,Understand Hindi numbers, time, and dates,Prepare for Hindi language certifications",
+    image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop",
+    pricing: 1699,
+    curriculum: [
+      {
+        title: "Introduction to Hindi Language and Indian Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 26
+      },
+      {
+        title: "Devanagari Script Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 24
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_hindi_1",
+        title: "Hindi Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_hindi_1",
+            type: "video",
+            title: "Devanagari Script and Basic Characters",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 55,
+          },
+          {
+            lessonId: "lesson_hindi_2",
+            type: "video",
+            title: "Hindi Pronunciation and Vowels",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 50,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Priya Sharma",
+        studentEmail: "priya.sharma@email.com",
+        paidAmount: 1699
+      }
+    ],
+    date: new Date("2024-06-30"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Dr. Ahmed Hassan",
+    title: "Arabic Language Essentials",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Arabic",
+    subtitle: "Learn Arabic: Script, Grammar, and Middle Eastern Culture",
+    description: "Discover the beauty of Arabic language and Middle Eastern culture. Learn Arabic script, pronunciation, grammar, and cultural context. Perfect for students, professionals, and culture enthusiasts.",
+    objectives: "Master Arabic script and writing system,Learn Arabic pronunciation and phonetics,Understand Arabic grammar and sentence structure,Develop conversational skills in Arabic,Learn about Middle Eastern culture and traditions,Understand formal and informal Arabic usage,Build confidence in speaking Arabic,Learn to read and write in Arabic,Understand Arabic numbers, time, and dates,Prepare for Arabic language certifications",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    pricing: 1999,
+    curriculum: [
+      {
+        title: "Introduction to Arabic Language and Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 29
+      },
+      {
+        title: "Arabic Script and Grammar Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 26
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_arabic_1",
+        title: "Arabic Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_arabic_1",
+            type: "video",
+            title: "Arabic Script and Letter Forms",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 65,
+          },
+          {
+            lessonId: "lesson_arabic_2",
+            type: "video",
+            title: "Arabic Pronunciation and Diacritics",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 60,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Omar Al-Rashid",
+        studentEmail: "omar.alrashid@email.com",
+        paidAmount: 1999
+      }
+    ],
+    date: new Date("2024-07-05"),
+    isPublished: true,
+  },
+  {
+    instructorName: "Prof. Kim Soo-jin",
+    title: "Korean Language and Culture",
+    category: "Language Learning",
+    level: "beginner",
+    primaryLanguage: "Korean",
+    subtitle: "Learn Korean: Hangul, Grammar, and K-Culture",
+    description: "Master Korean language with this comprehensive course covering Hangul script, grammar, vocabulary, and Korean cultural context. Perfect for K-pop fans, drama lovers, and culture enthusiasts.",
+    objectives: "Master Hangul script and writing system,Learn Korean pronunciation and phonetics,Understand Korean grammar and sentence structure,Develop conversational skills in Korean,Learn about Korean culture and traditions,Understand honorifics and polite language,Build confidence in speaking Korean,Learn to read and write in Korean,Understand Korean numbers, time, and dates,Prepare for TOPIK Level 1 certification",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    pricing: 2099,
+    curriculum: [
+      {
+        title: "Introduction to Korean Language and K-Culture",
+        videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+        freePreview: true,
+        type: "video",
+        duration: 31
+      },
+      {
+        title: "Hangul Script and Grammar Guide (PDF)",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        type: "pdf",
+        duration: 27
+      }
+    ],
+    modules: [
+      {
+        moduleId: "module_korean_1",
+        title: "Korean Fundamentals",
+        lessons: [
+          {
+            lessonId: "lesson_korean_1",
+            type: "video",
+            title: "Hangul Script and Basic Characters",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 60,
+          },
+          {
+            lessonId: "lesson_korean_2",
+            type: "video",
+            title: "Korean Pronunciation and Vowels",
+            fileUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            duration: 55,
+          }
+        ],
+      }
+    ],
+    students: [
+      {
+        studentId: new mongoose.Types.ObjectId(),
+        studentName: "Park Min-jun",
+        studentEmail: "park.minjun@email.com",
+        paidAmount: 2099
+      }
+    ],
+    date: new Date("2024-07-10"),
+    isPublished: true,
+  }
+];
+
+// Add international language courses to main courses array
+internationalCourses.forEach(course => {
+  courses.push(course);
+});
+
 async function seedCourses() {
   try {
     require("dotenv").config({ path: "../.env" });

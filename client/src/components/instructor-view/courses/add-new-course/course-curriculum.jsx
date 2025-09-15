@@ -13,7 +13,7 @@ import {
   mediaUploadService,
 } from "@/services";
 import { Upload } from "lucide-react";
-import { useContext, useRef } from "react";
+import React, { useContext, useRef } from "react";
 
 function CourseCurriculum() {
   const {
@@ -27,33 +27,56 @@ function CourseCurriculum() {
 
   const bulkUploadInputRef = useRef(null);
 
+  // Debug logging
+  console.log("CourseCurriculum render - curriculum data:", courseCurriculumFormData);
+  console.log("CourseCurriculum render - upload progress:", mediaUploadProgress);
+
+  // Test backend connectivity
+  React.useEffect(() => {
+    const testBackend = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/health', { 
+          method: 'GET',
+          mode: 'cors'
+        });
+        console.log("Backend connectivity test:", response.status);
+      } catch (error) {
+        console.error("Backend connectivity test failed:", error);
+      }
+    };
+    testBackend();
+  }, []);
+
   function handleNewLecture() {
-    setCourseCurriculumFormData([
-      ...courseCurriculumFormData,
-      {
-        ...courseCurriculumInitialFormData[0],
-      },
-    ]);
+    console.log("Adding new lecture. Current data:", courseCurriculumFormData);
+    const newLecture = {
+      ...courseCurriculumInitialFormData[0],
+    };
+    const updatedData = [...courseCurriculumFormData, newLecture];
+    console.log("New curriculum data:", updatedData);
+    setCourseCurriculumFormData(updatedData);
   }
 
   function handleCourseTitleChange(event, currentIndex) {
     let cpyCourseCurriculumFormData = [...courseCurriculumFormData];
-    cpyCourseCurriculumFormData[currentIndex] = {
-      ...cpyCourseCurriculumFormData[currentIndex],
-      title: event.target.value,
-    };
-
-    setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    if (cpyCourseCurriculumFormData[currentIndex]) {
+      cpyCourseCurriculumFormData[currentIndex] = {
+        ...cpyCourseCurriculumFormData[currentIndex],
+        title: event.target.value,
+      };
+      setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    }
   }
 
   function handleFreePreviewChange(currentValue, currentIndex) {
     let cpyCourseCurriculumFormData = [...courseCurriculumFormData];
-    cpyCourseCurriculumFormData[currentIndex] = {
-      ...cpyCourseCurriculumFormData[currentIndex],
-      freePreview: currentValue,
-    };
-
-    setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    if (cpyCourseCurriculumFormData[currentIndex]) {
+      cpyCourseCurriculumFormData[currentIndex] = {
+        ...cpyCourseCurriculumFormData[currentIndex],
+        freePreview: currentValue,
+      };
+      setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    }
   }
 
   async function handleSingleLectureUpload(event, currentIndex) {
@@ -65,25 +88,42 @@ function CourseCurriculum() {
       formData.append("file", selectedFile);
 
       try {
+        console.log("=== STARTING FILE UPLOAD ===");
+        console.log("Uploading file:", selectedFile.name, "Type:", selectedFile.type);
+        console.log("File size:", selectedFile.size);
+        console.log("Current index:", currentIndex);
+        console.log("Current curriculum data:", courseCurriculumFormData);
+        
         setMediaUploadProgress(true);
         const response = await mediaUploadService(
           formData,
           setMediaUploadProgressPercentage
         );
+        console.log("=== UPLOAD RESPONSE ===");
+        console.log("Upload response:", response);
+        
         if (response.success) {
           let cpyCourseCurriculumFormData = [...courseCurriculumFormData];
-          cpyCourseCurriculumFormData[currentIndex] = {
-            ...cpyCourseCurriculumFormData[currentIndex],
-            videoUrl: isPdf ? "" : response?.data?.url,
-            public_id: response?.data?.public_id,
-            type: isPdf ? "pdf" : "video",
-            fileUrl: response?.data?.url,
-          };
-          setCourseCurriculumFormData(cpyCourseCurriculumFormData);
-          setMediaUploadProgress(false);
+          if (cpyCourseCurriculumFormData[currentIndex]) {
+            cpyCourseCurriculumFormData[currentIndex] = {
+              ...cpyCourseCurriculumFormData[currentIndex],
+              videoUrl: isPdf ? "" : response?.data?.url,
+              public_id: response?.data?.public_id,
+              type: isPdf ? "pdf" : "video",
+              fileUrl: response?.data?.url,
+            };
+            setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+            setMediaUploadProgress(false);
+            console.log("Updated curriculum data:", cpyCourseCurriculumFormData);
+          }
+        } else {
+          console.error("Upload failed:", response);
+          alert("Upload failed: " + (response.message || "Unknown error"));
         }
       } catch (error) {
-        console.log(error);
+        console.error("Upload error:", error);
+        alert("Upload error: " + error.message);
+        setMediaUploadProgress(false);
       }
     }
   }
@@ -109,14 +149,25 @@ function CourseCurriculum() {
   }
 
   function isCourseCurriculumFormDataValid() {
-    return courseCurriculumFormData.every((item) => {
-      return (
-        item &&
-        typeof item === "object" &&
-        item.title.trim() !== "" &&
-        item.videoUrl.trim() !== ""
-      );
+    console.log("Validating curriculum data:", courseCurriculumFormData);
+    
+    // Allow adding lectures if there are no lectures yet, or if at least one lecture is complete
+    if (courseCurriculumFormData.length === 0) {
+      console.log("No lectures yet, allowing add lecture");
+      return true;
+    }
+    
+    // Check if at least one lecture has both title and video
+    const isValid = courseCurriculumFormData.some((item, index) => {
+      const hasTitle = item && item.title && item.title.trim() !== "";
+      const hasVideo = item && ((item.videoUrl && item.videoUrl.trim() !== "") || 
+                               (item.fileUrl && item.fileUrl.trim() !== ""));
+      console.log(`Lecture ${index}: hasTitle=${hasTitle}, hasVideo=${hasVideo}`, item);
+      return hasTitle && hasVideo;
     });
+    
+    console.log("Curriculum validation result:", isValid);
+    return isValid;
   }
 
   function handleOpenBulkUploadDialog() {
@@ -230,7 +281,7 @@ function CourseCurriculum() {
         ) : null}
         <div className="mt-4 space-y-4">
           {courseCurriculumFormData.map((curriculumItem, index) => (
-            <div className="border p-5 rounded-md">
+            <div key={index} className="border p-5 rounded-md">
               <div className="flex gap-5 items-center">
                 <h3 className="font-semibold">Lecture {index + 1}</h3>
                 <Input
@@ -238,14 +289,14 @@ function CourseCurriculum() {
                   placeholder="Enter lecture title"
                   className="max-w-96"
                   onChange={(event) => handleCourseTitleChange(event, index)}
-                  value={courseCurriculumFormData[index]?.title}
+                  value={courseCurriculumFormData[index]?.title || ""}
                 />
                 <div className="flex items-center space-x-2">
                   <Switch
                     onCheckedChange={(value) =>
                       handleFreePreviewChange(value, index)
                     }
-                    checked={courseCurriculumFormData[index]?.freePreview}
+                    checked={courseCurriculumFormData[index]?.freePreview || false}
                     id={`freePreview-${index + 1}`}
                   />
                   <Label htmlFor={`freePreview-${index + 1}`}>
@@ -254,11 +305,11 @@ function CourseCurriculum() {
                 </div>
               </div>
               <div className="mt-6">
-                {courseCurriculumFormData[index]?.fileUrl ? (
+                {courseCurriculumFormData[index]?.fileUrl || courseCurriculumFormData[index]?.videoUrl ? (
                   <div className="flex gap-3">
                     {courseCurriculumFormData[index]?.type === "pdf" ? (
                       <a
-                        href={courseCurriculumFormData[index]?.fileUrl}
+                        href={courseCurriculumFormData[index]?.fileUrl || courseCurriculumFormData[index]?.videoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 underline"

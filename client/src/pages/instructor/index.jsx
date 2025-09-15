@@ -1,19 +1,23 @@
 import InstructorCourses from "@/components/instructor-view/courses";
 import InstructorDashboard from "@/components/instructor-view/dashboard";
 import InstructorLiveSessions from "@/components/instructor-view/live-sessions";
+import InstructorProfile from "@/components/instructor-view/profile";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { AuthContext } from "@/context/auth-context";
 import { InstructorContext } from "@/context/instructor-context";
 import { fetchInstructorCourseListService } from "@/services";
-import { BarChart, Book, LogOut, Video } from "lucide-react";
+import { BarChart, Book, LogOut, User, Video } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Logo from "@/assets/Logo.png";
 
 function InstructorDashboardpage() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const { resetCredentials } = useContext(AuthContext);
   const { instructorCoursesList, setInstructorCoursesList } =
     useContext(InstructorContext);
+  const navigate = useNavigate();
 
   async function fetchAllCourses() {
     const response = await fetchInstructorCourseListService();
@@ -30,67 +34,74 @@ function InstructorDashboardpage() {
       label: "Dashboard",
       value: "dashboard",
       component: <InstructorDashboard listOfCourses={instructorCoursesList} />,
+      onClick: () => setActiveTab("dashboard"),
     },
     {
       icon: Book,
       label: "Courses",
       value: "courses",
       component: <InstructorCourses listOfCourses={instructorCoursesList} />,
+      onClick: () => setActiveTab("courses"),
     },
     {
       icon: Video,
       label: "Live Sessions",
       value: "live-sessions",
       component: <InstructorLiveSessions />,
+      onClick: () => setActiveTab("live-sessions"),
+    },
+    {
+      icon: User,
+      label: "My Profile",
+      value: "profile",
+      component: <InstructorProfile />,
+      onClick: () => setActiveTab("profile"),
     },
     {
       icon: LogOut,
       label: "Logout",
       value: "logout",
       component: null,
+      onClick: () => {
+        resetCredentials();
+        sessionStorage.clear();
+        navigate("/");
+      },
     },
   ];
 
-  function handleLogout() {
-    resetCredentials();
-    sessionStorage.clear();
-  }
-
-  console.log(instructorCoursesList, "instructorCoursesList");
-
   return (
     <div className="flex h-full min-h-screen bg-gray-100">
-      <aside className="w-64 bg-white shadow-md hidden md:block">
-        <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Instructor View</h2>
-          <nav>
-            {menuItems.map((menuItem) => (
-              <Button
-                className="w-full justify-start mb-2"
-                key={menuItem.value}
-                variant={activeTab === menuItem.value ? "secondary" : "ghost"}
-                onClick={
-                  menuItem.value === "logout"
-                    ? handleLogout
-                    : () => setActiveTab(menuItem.value)
-                }
-              >
-                <menuItem.icon className="mr-2 h-4 w-4" />
-                {menuItem.label}
-              </Button>
-            ))}
-          </nav>
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-md hidden md:flex flex-col">
+        <div className="flex items-center justify-center py-4 border-b">
+          <img src={Logo} alt="Logo" className="h-14 w-auto" />
         </div>
+        <nav className="flex-1 px-4 py-6">
+          {menuItems.map((menuItem) => (
+            <Button
+              key={menuItem.value}
+              className="w-full justify-start mb-2"
+              variant={activeTab === menuItem.value ? "secondary" : "ghost"}
+              onClick={menuItem.onClick}
+            >
+              {menuItem.icon && <menuItem.icon className="mr-2 h-4 w-4" />}
+              {menuItem.label}
+            </Button>
+          ))}
+        </nav>
       </aside>
+      {/* Main Content */}
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            {menuItems.map((menuItem) => (
-              <TabsContent value={menuItem.value}>
-                {menuItem.component !== null ? menuItem.component : null}
-              </TabsContent>
-            ))}
+            {menuItems
+              .filter((item) => item.component !== null)
+              .map((menuItem) => (
+                <TabsContent key={menuItem.value} value={menuItem.value}>
+                  {menuItem.component}
+                </TabsContent>
+              ))}
           </Tabs>
         </div>
       </main>

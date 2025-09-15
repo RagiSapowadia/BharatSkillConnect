@@ -43,58 +43,89 @@ function AddNewCoursePage() {
   }
 
   function validateFormData() {
-    for (const key in courseLandingFormData) {
+    console.log("=== VALIDATING FORM DATA ===");
+    console.log("Landing form data:", courseLandingFormData);
+    console.log("Curriculum form data:", courseCurriculumFormData);
+    
+    // Check if landing page has required fields
+    const requiredLandingFields = ['title', 'category', 'level', 'description', 'pricing'];
+    for (const key of requiredLandingFields) {
       if (isEmpty(courseLandingFormData[key])) {
+        console.log(`Missing required landing field: ${key}`);
         return false;
       }
     }
+    console.log("All required landing fields present");
 
+    // Check if curriculum has at least one complete lecture
+    if (courseCurriculumFormData.length === 0) {
+      console.log("No curriculum lectures found");
+      return false;
+    }
+
+    let hasCompleteLecture = false;
     let hasFreePreview = false;
 
     for (const item of courseCurriculumFormData) {
+      // Check if lecture is complete (has title and video/file)
       if (
-        isEmpty(item.title) ||
-        isEmpty(item.videoUrl) ||
-        isEmpty(item.public_id)
+        item && 
+        !isEmpty(item.title) &&
+        (!isEmpty(item.videoUrl) || !isEmpty(item.fileUrl) || !isEmpty(item.public_id))
       ) {
-        return false;
+        hasCompleteLecture = true;
+        console.log("Found complete lecture:", item);
       }
 
-      if (item.freePreview) {
+      if (item && item.freePreview) {
         hasFreePreview = true; //found at least one free preview
+        console.log("Found free preview lecture:", item);
       }
     }
 
-    return hasFreePreview;
+    console.log(`hasCompleteLecture: ${hasCompleteLecture}, hasFreePreview: ${hasFreePreview}`);
+    const isValid = hasCompleteLecture && hasFreePreview;
+    console.log("Form validation result:", isValid);
+    return isValid;
   }
 
   async function handleCreateCourse() {
-    const courseFinalFormData = {
-      instructorId: auth?.user?._id,
-      instructorName: auth?.user?.userName,
-      date: new Date(),
-      ...courseLandingFormData,
-      students: [],
-      curriculum: courseCurriculumFormData,
-      isPublised: true,
-    };
+    try {
+      const courseFinalFormData = {
+        teacherId: auth?.user?._id,
+        instructorName: auth?.user?.name || auth?.user?.userName,
+        date: new Date(),
+        ...courseLandingFormData,
+        students: [],
+        curriculum: courseCurriculumFormData,
+        isPublished: true,
+      };
 
-    const response =
-      currentEditedCourseId !== null
-        ? await updateCourseByIdService(
-            currentEditedCourseId,
-            courseFinalFormData
-          )
-        : await addNewCourseService(courseFinalFormData);
+      console.log("Creating course with data:", courseFinalFormData);
 
-    if (response?.success) {
-      setCourseLandingFormData(courseLandingInitialFormData);
-      setCourseCurriculumFormData(courseCurriculumInitialFormData);
-      navigate(-1);
-      setCurrentEditedCourseId(null);
+      const response =
+        currentEditedCourseId !== null
+          ? await updateCourseByIdService(
+              currentEditedCourseId,
+              courseFinalFormData
+            )
+          : await addNewCourseService(courseFinalFormData);
+
+      console.log("Course creation response:", response);
+
+      if (response?.success) {
+        setCourseLandingFormData(courseLandingInitialFormData);
+        setCourseCurriculumFormData(courseCurriculumInitialFormData);
+        navigate("/instructor");
+        setCurrentEditedCourseId(null);
+        alert("Course created successfully!");
+      } else {
+        alert("Failed to create course: " + (response?.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Error creating course:", error);
+      alert("Error creating course: " + error.message);
     }
-
-    console.log(courseFinalFormData, "courseFinalFormData");
   }
 
   async function fetchCurrentCourseDetails() {

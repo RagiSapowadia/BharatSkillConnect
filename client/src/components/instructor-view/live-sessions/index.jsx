@@ -8,6 +8,96 @@ import { useContext, useEffect, useState } from "react";
 import { InstructorContext } from "@/context/instructor-context";
 import { AuthContext } from "@/context/auth-context";
 import axiosInstance from "@/api/axiosInstance";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+function LiveSessionCard({ session }) {
+  // Function to check if session should be live based on current time
+  const isSessionLive = (session) => {
+    try {
+      const now = new Date();
+      const sessionDate = new Date(session.date);
+      
+      // Handle time parsing more robustly
+      const [hours, minutes] = session.startTime.split(":").map(Number);
+      const sessionDateTime = new Date(sessionDate);
+      sessionDateTime.setHours(hours, minutes, 0, 0);
+      
+      const endDateTime = new Date(sessionDateTime.getTime() + (session.duration || 60) * 60000);
+      
+      // Session is live if current time is between start and end time
+      return now >= sessionDateTime && now <= endDateTime;
+    } catch (error) {
+      console.error("Error in isSessionLive:", error);
+      return false;
+    }
+  };
+
+  // Function to check if session can be joined (60 minutes after scheduled time)
+  const canJoinSession = (session) => {
+    try {
+      const now = new Date();
+      const sessionDate = new Date(session.date);
+      const [hours, minutes] = session.startTime.split(":").map(Number);
+      const sessionDateTime = new Date(sessionDate);
+      sessionDateTime.setHours(hours, minutes, 0, 0);
+      
+      // Can join 60 minutes after scheduled start time
+      const joinTime = new Date(sessionDateTime.getTime() + 60 * 60000);
+      
+      return now >= joinTime;
+    } catch (error) {
+      console.error("Error in canJoinSession:", error);
+      return false;
+    }
+  };
+
+  // Card style similar to featured section
+  return (
+    <div className="bg-white rounded-lg shadow-sm border hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden">
+      <div className="p-4 space-y-2">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center font-bold text-lg text-green-700">
+            {session.title?.charAt(0) || "S"}
+          </div>
+          <span className="font-medium text-gray-700">{session.courseTitle || session.title || "Live Session"}</span>
+          <span className={`ml-auto px-2 py-1 rounded-full text-xs font-semibold ${
+            isSessionLive(session) ? "bg-red-100 text-red-700" : 
+            canJoinSession(session) ? "bg-blue-100 text-blue-700" : 
+            "bg-gray-100 text-gray-700"
+          }`}>
+            {isSessionLive(session) ? "LIVE" : 
+             canJoinSession(session) ? "JOIN NOW" : 
+             "UPCOMING"}
+          </span>
+        </div>
+        <h3 className="font-semibold text-gray-900 leading-snug min-h-[40px] line-clamp-2 group-hover:text-blue-600 transition-colors">
+          {session.title}
+        </h3>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <span> {new Date(session.date).toLocaleDateString()} {session.startTime && `at ${session.startTime}`}</span>
+          <span> {session.duration || 60} mins</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <span> {session.courseName || session.courseTitle || "Course"}</span>
+          <span> Zoom Meeting</span>
+        </div>
+        <div className="pt-2">
+          {isSessionLive(session) ? (
+            <Button asChild className="w-full bg-red-600 hover:bg-red-700 text-white">
+              <a href={session.zoomOrAgoraLink || "#"} target="_blank" rel="noopener noreferrer">Join Live Session</a>
+            </Button>
+          ) : canJoinSession(session) ? (
+            <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <a href={session.zoomOrAgoraLink || "#"} target="_blank" rel="noopener noreferrer">Join Live Session</a>
+            </Button>
+          ) : (
+            <Button disabled className="w-full">Session Scheduled</Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function InstructorLiveSessions() {
   const [liveSessions, setLiveSessions] = useState([]);
@@ -20,6 +110,9 @@ function InstructorLiveSessions() {
   });
   const { instructorCoursesList } = useContext(InstructorContext);
   const { auth } = useContext(AuthContext);
+  const [showAll, setShowAll] = useState(false);
+  const upcomingSessions = liveSessions.filter(session => session.status === "upcoming" || session.status === "live");
+  const hasMore = upcomingSessions.length > 4;
 
   useEffect(() => {
     fetchLiveSessions();
@@ -123,69 +216,45 @@ function InstructorLiveSessions() {
               />
             </div>
             <div>
-              <Label htmlFor="duration">Duration (mins)</Label>
+              <Label htmlFor="duration">Duration (minutes)</Label>
               <Input
                 id="duration"
                 type="number"
-                min={15}
                 value={newSession.duration}
-                onChange={(e) => setNewSession({ ...newSession, duration: Number(e.target.value) })}
+                onChange={(e) => setNewSession({ ...newSession, duration: parseInt(e.target.value) || 60 })}
+                min="15"
+                max="240"
               />
             </div>
+            <div className="flex items-end">
+              <Button onClick={handleCreateSession} className="w-full">
+                Create Session
+              </Button>
+            </div>
           </div>
-          <Button onClick={handleCreateSession} className="w-full">
-            Schedule Session
-          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Upcoming Live Sessions</CardTitle>
+          <CardTitle>Upcoming Sessions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {liveSessions
-              .filter(session => session.status === "upcoming")
-              .map((session) => (
-                <div key={session._id} className="border p-4 rounded-lg">
-                  <h3 className="font-semibold">{session.title}</h3>
-                  <p className="text-sm text-gray-600">
-                    {new Date(session.date).toLocaleDateString()} | {session.startTime} ({session.duration} mins)
-                  </p>
-                  {session.zoomStartLink && (
-                    <p className="text-sm mt-1">
-                      {/^https?:\/\//.test(session.zoomStartLink) ? (
-                        <>
-                          Instructor start link: <a href={session.zoomStartLink} target="_blank" rel="noreferrer" className="text-blue-600">Open</a>
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground">Instructor start link will be provided soon</span>
-                      )}
-                    </p>
-                  )}
-                  {session.zoomOrAgoraLink && (
-                    <p className="text-sm">
-                      {/^https?:\/\//.test(session.zoomOrAgoraLink) ? (
-                        <>
-                          Student join link: <a href={session.zoomOrAgoraLink} target="_blank" rel="noreferrer" className="text-blue-600">Open</a>
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground">Student join link will be provided soon</span>
-                      )}
-                    </p>
-                  )}
-                  <div className="mt-2">
-                    <Label htmlFor={`recording-${session._id}`}>Recording URL (after session)</Label>
-                    <Input
-                      id={`recording-${session._id}`}
-                      placeholder="Upload recording URL"
-                      onBlur={(e) => handleUpdateRecording(session._id, e.target.value)}
-                    />
-                  </div>
-                </div>
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {upcomingSessions.slice(0, showAll ? upcomingSessions.length : 4).map((session) => (
+              <LiveSessionCard key={session._id} session={session} />
+            ))}
           </div>
+          {hasMore && (
+            <div className="text-center mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? "Show Less" : `Show All (${upcomingSessions.length})`}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

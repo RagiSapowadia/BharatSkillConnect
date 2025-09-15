@@ -45,6 +45,8 @@ const CourseSchema = new mongoose.Schema({
     }, { _id: false })
   ],
   date: { type: Date, default: Date.now },
+  averageRating: { type: Number, default: 0 },
+  totalReviews: { type: Number, default: 0 },
   students: [
     new mongoose.Schema({
       studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

@@ -172,3 +172,83 @@ export async function updateUserProfileService(userId, profileData) {
   const { data } = await axiosInstance.put(`/auth/update-profile/${userId}`, profileData);
   return data;
 }
+
+// Instructor Dashboard Services
+export async function getInstructorDashboardStatsService(instructorId) {
+  const { data } = await axiosInstance.get(`/instructor/dashboard/${instructorId}`);
+  return data;
+}
+
+export async function getInstructorCoursesService(instructorId, page = 1, limit = 10) {
+  const { data } = await axiosInstance.get(`/instructor/courses/${instructorId}?page=${page}&limit=${limit}`);
+  return data;
+}
+
+
+// Message Services
+export async function sendMessageService(messageData) {
+  const { data } = await axiosInstance.post("/messages/send", messageData);
+  return data;
+}
+
+export async function getCourseMessagesService(courseId) {
+  const { data } = await axiosInstance.get(`/messages/course/${courseId}`);
+  return data;
+}
+
+export async function getConversationsService() {
+  const { data } = await axiosInstance.get("/messages/conversations");
+  return data;
+}
+
+export async function markMessageAsReadService(messageId) {
+  const { data } = await axiosInstance.put(`/messages/read/${messageId}`);
+  return data;
+}
+
+// Review Services
+export async function addReviewService(reviewData) {
+  const { data } = await axiosInstance.post("/reviews/add", reviewData);
+  return data;
+}
+
+export async function getCourseReviewsService(courseId, page = 1, limit = 10) {
+  const { data } = await axiosInstance.get(`/reviews/course/${courseId}?page=${page}&limit=${limit}`);
+  return data;
+}
+
+export async function updateReviewService(reviewId, reviewData) {
+  const { data } = await axiosInstance.put(`/reviews/${reviewId}`, reviewData);
+  return data;
+}
+
+export async function deleteReviewService(reviewId) {
+  const { data } = await axiosInstance.delete(`/reviews/${reviewId}`);
+  return data;
+}
+
+// Location Services
+export async function updateLocationService(locationData) {
+  const { data } = await axiosInstance.post("/locations/update", locationData);
+  return data;
+}
+
+export async function getUserLocationService(userId) {
+  const { data } = await axiosInstance.get(`/locations/user/${userId}`);
+  return data;
+}
+
+export async function getPublicLocationsService() {
+  const { data } = await axiosInstance.get("/locations/public");
+  return data;
+}
+
+export async function getInstructorLocationsService(courseId) {
+  const { data } = await axiosInstance.get(`/locations/instructor/${courseId}`);
+  return data;
+}
+
+export async function toggleLocationPrivacyService() {
+  const { data } = await axiosInstance.put("/locations/toggle-privacy");
+  return data;
+}

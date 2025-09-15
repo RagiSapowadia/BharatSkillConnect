@@ -24,20 +24,53 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 border-b" style={{ backgroundColor: "#F5FFF7" }}>
+    <header className="z-50 flex items-center justify-between px-6 py-3 border-b" style={{ backgroundColor: "#F5FFF7" }}>
       <div className="flex items-center space-x-6">
-        <Link to="/" className="flex items-center hover:text-black">
+        <Link 
+          to="/" 
+          className="flex items-center hover:text-black"
+        >
           <img src={Logo} alt="Logo" className="h-12 w-auto mr-2" />
         </Link>
         <nav className="hidden md:flex items-center space-x-6 text-sm text-gray-700">
-          <Link to="/courses" className="hover:text-black">Courses</Link>
-          <Link to="/student/live-sessions" className="hover:text-black">Live Sessions</Link>
-          <Link to="/courses" className="hover:text-black">Categories</Link>
+          {auth?.user?.role === "teacher" ? (
+            // Teacher navigation
+            <>
+              <button 
+                onClick={() => navigate("/instructor")} 
+                className="hover:text-black"
+              >
+                Dashboard
+              </button>
+              <button 
+                onClick={() => navigate("/instructor?tab=courses")} 
+                className="hover:text-black"
+              >
+                Courses
+              </button>
+              <button 
+                onClick={() => navigate("/instructor?tab=live-sessions")} 
+                className="hover:text-black"
+              >
+                Live Sessions
+              </button>
+            </>
+          ) : (
+            // Student navigation
+            <>
+              <Link to="/courses" className="hover:text-black">Courses</Link>
+              <Link to="/student/live-sessions" className="hover:text-black">Live Sessions</Link>
+              <Link to="/courses" className="hover:text-black">Categories</Link>
+            </>
+          )}
         </nav>
       </div>
       <div className="flex items-center space-x-4">
-
+        {auth?.user?.role === "teacher" ? (
+          <Link to="/profile" className="hover:text-black">My Profile</Link>
+        ) : (
           <Link to="/student/profile" className="hover:text-black">My Profile</Link>
+        )}
         {auth?.authenticate && auth?.user ? (
           <Button onClick={handleLogout} className="bg-red-600 hover:bg-red-700">Sign Out</Button>
         ) : (

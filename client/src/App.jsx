@@ -1,12 +1,13 @@
-import RouteGuard from "./components/route-guard";
+﻿import RouteGuard from "./components/route-guard";
 import StudentCoursesPage from "./pages/student/student-courses";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import Header from "./components/common/header";
 import LandingPage from "./pages/student/home";
 import StudentLiveSessionsPage from "./pages/student/live-sessions";
 import InstructorLiveSessionsPage from "./pages/instructor/live-sessions";
 import InstructorDashboardPage from "./pages/instructor/index";
+import AddNewCoursePage from "./pages/instructor/add-new-course";
 import StudentViewCoursesPage from "./pages/student/courses";
 import NotFoundPage from "./pages/not-found";
 import Footer from "./components/common/footer";
@@ -16,11 +17,22 @@ import StudentViewCourseDetailsPage from "./pages/student/course-details";
 import StudentViewCourseProgressPage from "./pages/student/course-progress";
 import PaymentReturnPage from "./pages/student/payment-return";
 import StudentProfilePage from "./pages/student/profile";
+
 function App() {
   const { auth } = useContext(AuthContext);
+  const location = useLocation();
+  
+  // Check if current route is instructor dashboard
+  const isInstructorDashboard = location.pathname.startsWith("/instructor") && 
+    (location.pathname === "/instructor" || 
+     location.pathname === "/instructor/live-sessions" || 
+     location.pathname.startsWith("/instructor/create-new-course") ||
+     location.pathname.startsWith("/instructor/edit-course"));
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {!isInstructorDashboard && <Header />}
+
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -55,6 +67,26 @@ function App() {
               />
             }
           />
+          <Route
+            path="/instructor/create-new-course"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<AddNewCoursePage />}
+              />
+            }
+          />
+          <Route
+            path="/instructor/edit-course/:courseId"
+            element={
+              <RouteGuard
+                authenticated={auth.authenticate}
+                user={auth.user}
+                element={<AddNewCoursePage />}
+              />
+            }
+          />
           <Route path="/student-courses" element={<StudentCoursesPage />} />
           <Route path="/courses" element={<StudentViewCoursesPage />} />
           <Route
@@ -76,7 +108,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!isInstructorDashboard && <Footer />}
     </div>
   );
 }

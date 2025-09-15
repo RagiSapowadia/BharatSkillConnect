@@ -3,6 +3,43 @@ const Course = require('../models/Course');
 const User = require('../models/User');
 const { createZoomMeeting } = require('../helpers/zoomHelper');
 
+// Update session status based on current time
+exports.updateSessionStatus = async (req, res) => {
+  try {
+    const now = new Date();
+    const sessions = await LiveSession.find({ status: { $in: ["upcoming", "live"] } });
+
+    for (const session of sessions) {
+      const sessionDate = new Date(session.date);
+      const [startHours, startMinutes] = session.startTime.split(":").map(Number);
+      const sessionDateTime = new Date(sessionDate);
+      sessionDateTime.setHours(startHours, startMinutes, 0, 0);
+      
+      const endDateTime = new Date(sessionDateTime.getTime() + (session.duration || 60) * 60000);
+      
+      // Session is live if current time is between start and end time
+      if (now >= sessionDateTime && now <= endDateTime) {
+        if (session.status !== "live") {
+          session.status = "live";
+          await session.save();
+        }
+      }
+      // Session is completed if current time is after end time
+      else if (now > endDateTime) {
+        if (session.status !== "completed") {
+          session.status = "completed";
+          await session.save();
+        }
+      }
+    }
+
+    res.json({ success: true, message: "Session statuses updated" });
+  } catch (error) {
+    console.error("Error updating session status:", error);
+    res.status(500).json({ success: false, message: "Failed to update session status" });
+  }
+};
+
 // Get all live sessions
 exports.getAllLiveSessions = async (req, res) => {
   try {
@@ -101,6 +138,43 @@ exports.createLiveSession = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Failed to create live session.' });
+  }
+};
+
+// Update session status based on current time
+exports.updateSessionStatus = async (req, res) => {
+  try {
+    const now = new Date();
+    const sessions = await LiveSession.find({ status: { $in: ["upcoming", "live"] } });
+
+    for (const session of sessions) {
+      const sessionDate = new Date(session.date);
+      const [startHours, startMinutes] = session.startTime.split(":").map(Number);
+      const sessionDateTime = new Date(sessionDate);
+      sessionDateTime.setHours(startHours, startMinutes, 0, 0);
+      
+      const endDateTime = new Date(sessionDateTime.getTime() + (session.duration || 60) * 60000);
+      
+      // Session is live if current time is between start and end time
+      if (now >= sessionDateTime && now <= endDateTime) {
+        if (session.status !== "live") {
+          session.status = "live";
+          await session.save();
+        }
+      }
+      // Session is completed if current time is after end time
+      else if (now > endDateTime) {
+        if (session.status !== "completed") {
+          session.status = "completed";
+          await session.save();
+        }
+      }
+    }
+
+    res.json({ success: true, message: "Session statuses updated" });
+  } catch (error) {
+    console.error("Error updating session status:", error);
+    res.status(500).json({ success: false, message: "Failed to update session status" });
   }
 };
 

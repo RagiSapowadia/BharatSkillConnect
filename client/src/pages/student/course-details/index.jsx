@@ -19,6 +19,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import MessagingComponent from "@/components/student-view/messaging";
+import ReviewRating from "@/components/student-view/review-rating";
+import axiosInstance from "@/api/axiosInstance";
+
 function StudentViewCourseDetailsPage() {
   const {
     studentViewCourseDetails,
@@ -40,6 +44,7 @@ function StudentViewCourseDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+  const [instructorLocation, setInstructorLocation] = useState(null);
 
   async function fetchStudentViewCourseDetails() {
     try {
@@ -164,6 +169,25 @@ function StudentViewCourseDetailsPage() {
     }
   }, [location.pathname, setStudentViewCourseDetails]);
 
+  // Fetch instructor location if public
+  useEffect(() => {
+    async function fetchInstructorLocation() {
+      if (studentViewCourseDetails?.teacherId?._id) {
+        try {
+          const res = await axiosInstance.get(`/locations/user/${studentViewCourseDetails.teacherId._id}`);
+          if (res.data.success && res.data.data.isPublic) {
+            setInstructorLocation(res.data.data);
+          } else {
+            setInstructorLocation(null);
+          }
+        } catch (e) {
+          setInstructorLocation(null);
+        }
+      }
+    }
+    fetchInstructorLocation();
+  }, [studentViewCourseDetails?.teacherId?._id]);
+
   if (loadingState) return <Skeleton />;
 
   if (approvalUrl !== "") {
@@ -262,6 +286,55 @@ function StudentViewCourseDetailsPage() {
               </ul>
             </CardContent>
           </Card>
+          {/* --- DYNAMIC FEATURES --- */}
+          <div className="mt-10 space-y-10">
+            {/* Instructor Location */}
+            {instructorLocation && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5 text-blue-600" />
+                    Instructor Location
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-gray-700">
+                    <div><b>Address:</b> {instructorLocation.address}</div>
+                    <div><b>City:</b> {instructorLocation.city}</div>
+                    <div><b>State:</b> {instructorLocation.state}</div>
+                    <div><b>Country:</b> {instructorLocation.country}</div>
+                    {instructorLocation.latitude && instructorLocation.longitude && (
+                      <div><b>Coordinates:</b> {instructorLocation.latitude.toFixed(6)}, {instructorLocation.longitude.toFixed(6)}</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {/* Messaging Feature */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-blue-600" />
+                  Course Chat
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MessagingComponent courseId={studentViewCourseDetails?._id} courseTitle={studentViewCourseDetails?.title} />
+              </CardContent>
+            </Card>
+            {/* Review & Rating Feature */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-yellow-500" />
+                  Course Reviews & Ratings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ReviewRating courseId={studentViewCourseDetails?._id} courseTitle={studentViewCourseDetails?.title} />
+              </CardContent>
+            </Card>
+          </div>
         </main>
         <aside className="w-full lg:w-96 xl:w-[420px] px-4 lg:px-0">
           <Card className="sticky top-4 shadow-lg">
